@@ -4,10 +4,15 @@
 
 # --- 環境設定 ---
 SERVER_IP      := $(shell ip route get 1 | awk '{for(i=1;i<=NF;i++) if($$i=="src") print $$(i+1)}' | head -1)
-ADMIN_ID       := admin
-ADMIN_EMAIL    := admin@localhost
-ADMIN_PW       := admin123
 CONSOLE_SECRET := console-secret
+
+# .secrets ファイルから認証情報を読み込み (存在する場合)
+-include .secrets
+
+# デフォルト値 (.secrets で未設定の場合のフォールバック)
+ADMIN_ID       ?= admin
+ADMIN_EMAIL    ?= admin@localhost
+ADMIN_PW       ?= admin123
 
 # ファイルパス定義
 TEMPLATE_FILE  := config/stack/ttn-lw-stack-docker-template.yml
@@ -34,11 +39,27 @@ logs:
 	docker compose logs -f stack
 
 # 5. 初期セットアップ
-init: conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create
+init: secrets-gen
+	@$(MAKE) --no-print-directory _init
+
+_init: conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create
+	@echo ">>> Stopping containers..."
+	@docker compose down
+	@echo ""
+	@echo "==================================================="
+	@echo "  Setup Finished!"
+	@echo "==================================================="
+	@echo ""
+	@echo "  Access URL : https://$(SERVER_IP)"
+	@echo "  Admin ID   : $(ADMIN_ID)"
+	@echo "  Password   : $(ADMIN_PW)"
+	@echo ""
 	@echo "---------------------------------------------------"
-	@echo "Setup Finished!"
-	@echo "Access: https://$(SERVER_IP)"
-	@echo "Login:  $(ADMIN_ID) / $(ADMIN_PW)"
+	@echo "  Next steps:"
+	@echo ""
+	@echo "    make up      - コンテナを起動"
+	@echo "    make logs    - ログを確認"
+	@echo "    make status  - コンテナの状態を確認"
 	@echo "---------------------------------------------------"
 
 # 6. 完全消去
@@ -99,7 +120,26 @@ update:
 	docker compose up -d
 	@echo ">>> Update complete."
 
-# 13. ヘルプ
+# 13. 管理者認証情報の更新
+update-admin:
+	@if [ ! -f .secrets ]; then \
+		echo "Error: .secrets file not found. Edit or create it first."; \
+		exit 1; \
+	fi
+	@echo ">>> Updating admin user with .secrets..."
+	@echo "    ADMIN_ID    = $(ADMIN_ID)"
+	@echo "    ADMIN_EMAIL = $(ADMIN_EMAIL)"
+	@docker compose up -d postgres redis
+	@until docker compose exec postgres pg_isready -U root -d ttn_lorawan_dev > /dev/null 2>&1; do \
+		sleep 1; \
+	done
+	-docker compose run --rm stack is-db create-admin-user \
+		--id $(ADMIN_ID) \
+		--email $(ADMIN_EMAIL) \
+		--password '$(ADMIN_PW)'
+	@echo ">>> Admin user updated."
+
+# 14. ヘルプ
 help:
 	@echo "============================================="
 	@echo " The Things Stack 管理コマンド"
@@ -121,6 +161,8 @@ help:
 	@echo "  make restore FILE=backups/xxx.sql.gz"
 	@echo "                 - 指定ファイルからDBリストア"
 	@echo ""
+	@echo "  make update-admin - .secrets の内容で管理者情報を更新"
+	@echo ""
 	@echo "  make update    - Dockerイメージの更新と再起動"
 	@echo "  make help      - このヘルプを表示"
 	@echo ""
@@ -128,6 +170,23 @@ help:
 	@echo "============================================="
 
 # --- 以下、内部タスク ---
+
+secrets-gen:
+	@if [ ! -f .secrets ]; then \
+		echo ">>> .secrets file not found. Please enter admin credentials."; \
+		read -p "Admin ID [admin]: " id; \
+		id=$${id:-admin}; \
+		read -p "Admin Email [admin@localhost]: " email; \
+		email=$${email:-admin@localhost}; \
+		read -p "Admin Password [admin123]: " pw; \
+		pw=$${pw:-admin123}; \
+		echo "ADMIN_ID       := $$id" > .secrets; \
+		echo "ADMIN_EMAIL    := $$email" >> .secrets; \
+		echo "ADMIN_PW       := $$pw" >> .secrets; \
+		echo ">>> .secrets file created."; \
+	else \
+		echo ">>> Loading credentials from .secrets file."; \
+	fi
 
 conf-gen:
 	@echo ">>> Generating config file from template..."
@@ -138,6 +197,9 @@ conf-gen:
 	@cp $(TEMPLATE_FILE) $(CONFIG_FILE)
 	@echo ">>> Updating config file with SERVER_IP: $(SERVER_IP)..."
 	@sed -i 's/thethings\.example\.com/$(SERVER_IP)/g' $(CONFIG_FILE)
+	@echo ">>> Generating cookie keys..."
+	@sed -i "s/__COOKIE_BLOCK_KEY__/$$(openssl rand -hex 32)/" $(CONFIG_FILE)
+	@sed -i "s/__COOKIE_HASH_KEY__/$$(openssl rand -hex 64)/" $(CONFIG_FILE)
 
 cert-gen:
 	@echo ">>> Generating Self-Signed Certificates..."
@@ -201,5 +263,5 @@ console-create:
 		--logout-redirect-uri "https://$(SERVER_IP)/console" \
 		--logout-redirect-uri "/console"
 
-.PHONY: all up down restart logs init clean reset status shell backup restore update help \
-	conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create
+.PHONY: all up down restart logs init _init clean reset status shell backup restore update update-admin help \
+	secrets-gen conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create

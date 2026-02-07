@@ -22,6 +22,9 @@ is:
     #   username: '...'             # enter SMTP server username
     #   password: '...'             # enter SMTP server password
 
+  user-registration:
+    enabled: false
+
   oauth:
     ui:
       canonical-url: 'https://thethings.example.com/oauth'
@@ -31,8 +34,8 @@ is:
 # HTTP server configuration
 http:
   cookie:
-    block-key: '82eacb3741b7a5d7baf2d3015c3f03f7f9dd4aabab77fbd79b1ff10b95e0de73'                # generate 32 bytes (openssl rand -hex 32)
-    hash-key: '0509527d6cdbfd9d8a0ee7f220ba61423ef39ccd194bb0fb96a87057c6206f5ac4ac15f9fc9e7ec1fc13eab805fb9b1397b1e6801141bb2a30a6e35ff3ae3cd3'                 # generate 64 bytes (openssl rand -hex 64)
+    block-key: '__COOKIE_BLOCK_KEY__'
+    hash-key: '__COOKIE_HASH_KEY__'
 #   metrics:
 #     password: 'metrics'               # choose a password
 #   pprof:
