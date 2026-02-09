@@ -64,6 +64,34 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    user: "0"
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ${DEV_DATA_DIR:-.env/data}/prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stack
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    user: "0"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ${DEV_DATA_DIR:-.env/data}/grafana:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 # If using custom certificates:
 secrets:
   ca.pem:

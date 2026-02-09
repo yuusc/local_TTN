@@ -1,0 +1,450 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 200,
+      "title": "Uplink",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "title": "Uplinks (GS -> NS) Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleUplink\",grpc_service=\"ttn.lorawan.v3.GsNs\",grpc_code=\"OK\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "title": "Uplinks (NS -> AS) Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleUplink\",grpc_service=\"ttn.lorawan.v3.NsAs\",grpc_code=\"OK\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "title": "Join Requests Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleJoin\",grpc_service=\"ttn.lorawan.v3.NsJs\",grpc_code=\"OK\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "blue", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "title": "UDP Messages Received Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(ttn_lw_gs_io_udp_message_received_total{job=\"ttn-stack\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "purple", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 5 },
+      "id": 10,
+      "title": "Uplink Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleUplink\",grpc_service=\"ttn.lorawan.v3.GsNs\",grpc_code=\"OK\"}[5m]))",
+          "legendFormat": "GS -> NS (received)"
+        },
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleUplink\",grpc_service=\"ttn.lorawan.v3.NsAs\",grpc_code=\"OK\"}[5m]))",
+          "legendFormat": "NS -> AS (forwarded)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 15, "pointSize": 5, "showPoints": "auto" }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 5 },
+      "id": 11,
+      "title": "Uplink Errors",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleUplink\",grpc_service=\"ttn.lorawan.v3.GsNs\",grpc_code!=\"OK\"}[5m])) by (grpc_code)",
+          "legendFormat": "GS->NS {{ grpc_code }}"
+        },
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleUplink\",grpc_service=\"ttn.lorawan.v3.NsAs\",grpc_code!=\"OK\"}[5m])) by (grpc_code)",
+          "legendFormat": "NS->AS {{ grpc_code }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "normal" } }
+        }
+      },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 13 },
+      "id": 201,
+      "title": "Join",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "id": 20,
+      "title": "Join Request Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleJoin\",grpc_service=\"ttn.lorawan.v3.NsJs\",grpc_code=\"OK\"}[5m]))",
+          "legendFormat": "Successful Joins"
+        },
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleJoin\",grpc_service=\"ttn.lorawan.v3.NsJs\",grpc_code!=\"OK\"}[5m]))",
+          "legendFormat": "Failed Joins"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 15 }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Failed Joins" }, "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Successful Joins" }, "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }] }
+        ]
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "id": 21,
+      "title": "Join Error Breakdown",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"HandleJoin\",grpc_service=\"ttn.lorawan.v3.NsJs\",grpc_code!=\"OK\"}[5m])) by (grpc_code)",
+          "legendFormat": "{{ grpc_code }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "bars", "fillOpacity": 50, "stacking": { "mode": "normal" } }
+        }
+      },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum"] } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+      "id": 202,
+      "title": "Downlink",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 23 },
+      "id": 30,
+      "title": "Downlink Queue Push Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"DownlinkQueuePush\",grpc_service=\"ttn.lorawan.v3.AppAs\",grpc_code=\"OK\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "orange", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 23 },
+      "id": 31,
+      "title": "Downlink Scheduled Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"ScheduleDownlink\",grpc_service=\"ttn.lorawan.v3.NsGs\",grpc_code=\"OK\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "orange", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 23 },
+      "id": 32,
+      "title": "Downlink Queue Replace Total",
+      "type": "stat",
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        {
+          "expr": "sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"DownlinkQueueReplace\",grpc_service=\"ttn.lorawan.v3.AppAs\",grpc_code=\"OK\"})",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "orange", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 27 },
+      "id": 33,
+      "title": "Downlink Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"DownlinkQueuePush\",grpc_service=\"ttn.lorawan.v3.AppAs\",grpc_code=\"OK\"}[5m]))",
+          "legendFormat": "Queue Push (App -> AS)"
+        },
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"ScheduleDownlink\",grpc_service=\"ttn.lorawan.v3.NsGs\",grpc_code=\"OK\"}[5m]))",
+          "legendFormat": "Scheduled (NS -> GS)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 15, "pointSize": 5, "showPoints": "auto" }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 27 },
+      "id": 34,
+      "title": "Downlink Errors",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"DownlinkQueuePush\",grpc_service=\"ttn.lorawan.v3.AppAs\",grpc_code!=\"OK\"}[5m])) by (grpc_code)",
+          "legendFormat": "Push {{ grpc_code }}"
+        },
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"ScheduleDownlink\",grpc_service=\"ttn.lorawan.v3.NsGs\",grpc_code!=\"OK\"}[5m])) by (grpc_code)",
+          "legendFormat": "Schedule {{ grpc_code }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "normal" } }
+        }
+      },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 },
+      "id": 203,
+      "title": "Gateway",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+      "id": 40,
+      "title": "Gateway Connections",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(grpc_server_started_total{job=\"ttn-stack\",grpc_method=\"LinkGateway\",grpc_service=\"ttn.lorawan.v3.GtwGs\"}) - sum(grpc_server_handled_total{job=\"ttn-stack\",grpc_method=\"LinkGateway\",grpc_service=\"ttn.lorawan.v3.GtwGs\"})",
+          "legendFormat": "Active Gateway Links"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 20 },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+      "id": 41,
+      "title": "UDP Messages Received Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(ttn_lw_gs_io_udp_message_received_total{job=\"ttn-stack\"}[5m]))",
+          "legendFormat": "UDP msg/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 20 }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
+      "id": 204,
+      "title": "Application Server",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 45 },
+      "id": 50,
+      "title": "Active Subscriptions",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "ttn_lw_as_subscriptions_started_total{job=\"ttn-stack\"} - ttn_lw_as_subscriptions_stopped_total{job=\"ttn-stack\"}",
+          "legendFormat": "Subscriptions"
+        },
+        {
+          "expr": "ttn_lw_as_subscription_sets_started_total{job=\"ttn-stack\"} - ttn_lw_as_subscription_sets_stopped_total{job=\"ttn-stack\"}",
+          "legendFormat": "Subscription Sets"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 15 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 45 },
+      "id": 51,
+      "title": "Events Published / Dropped",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(ttn_lw_events_publishes_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Published"
+        },
+        {
+          "expr": "rate(ttn_lw_events_channel_dropped_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Dropped"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "drawStyle": "line", "fillOpacity": 15 }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Dropped" }, "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] }
+        ]
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 45 },
+      "id": 52,
+      "title": "JavaScript Payload Codec Latency",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(ttn_lw_javascript_run_latency_seconds_bucket{job=\"ttn-stack\"}[5m])) by (le))",
+          "legendFormat": "Run p50"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(ttn_lw_javascript_run_latency_seconds_bucket{job=\"ttn-stack\"}[5m])) by (le))",
+          "legendFormat": "Run p95"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(ttn_lw_javascript_compilations_latency_seconds_bucket{job=\"ttn-stack\"}[5m])) by (le))",
+          "legendFormat": "Compile p50"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(ttn_lw_javascript_compilations_latency_seconds_bucket{job=\"ttn-stack\"}[5m])) by (le))",
+          "legendFormat": "Compile p95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["ttn", "lorawan"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "TTN LoRaWAN",
+  "uid": "ttn-lorawan"
+}

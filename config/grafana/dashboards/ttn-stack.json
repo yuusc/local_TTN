@@ -1,0 +1,552 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "steps": [{ "color": "green", "value": null }] },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 1,
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Uptime",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "time() - process_start_time_seconds{job=\"ttn-stack\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": { "steps": [{ "color": "green", "value": null }] }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 2,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Goroutines",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "go_goroutines{job=\"ttn-stack\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 200 },
+              { "color": "red", "value": 500 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 3,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Heap Memory Used",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "go_memstats_heap_alloc_bytes{job=\"ttn-stack\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 268435456 },
+              { "color": "red", "value": 536870912 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 4,
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Open File Descriptors",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "process_open_fds{job=\"ttn-stack\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 900 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "id": 5,
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Process CPU",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.5 },
+              { "color": "red", "value": 0.9 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "id": 6,
+      "options": { "colorMode": "value", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Process RSS",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"ttn-stack\"}",
+          "legendFormat": ""
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 536870912 },
+              { "color": "red", "value": 1073741824 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 101,
+      "title": "gRPC",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "id": 10,
+      "title": "gRPC Request Rate (by service)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\"}[5m])) by (grpc_service)",
+          "legendFormat": "{{ grpc_service }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "none" } }
+        }
+      },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] } }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "id": 11,
+      "title": "gRPC Error Rate (by code)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_handled_total{job=\"ttn-stack\",grpc_code!=\"OK\"}[5m])) by (grpc_code)",
+          "legendFormat": "{{ grpc_code }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "normal" } }
+        }
+      },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] } }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "id": 12,
+      "title": "gRPC Server Connections",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "grpc_server_conns_opened_total{job=\"ttn-stack\"} - grpc_server_conns_closed_total{job=\"ttn-stack\"}",
+          "legendFormat": "Active Connections"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 20 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "id": 13,
+      "title": "gRPC Stream Messages (sent/received)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_server_msg_received_total{job=\"ttn-stack\"}[5m]))",
+          "legendFormat": "Received"
+        },
+        {
+          "expr": "sum(rate(grpc_server_msg_sent_total{job=\"ttn-stack\"}[5m]))",
+          "legendFormat": "Sent"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+      "id": 102,
+      "title": "LoRaWAN (GS / AS)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 23 },
+      "id": 20,
+      "title": "Gateway Server - UDP Messages Received",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(ttn_lw_gs_io_udp_message_received_total{job=\"ttn-stack\"}[5m]))",
+          "legendFormat": "UDP msg/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "line", "fillOpacity": 20 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 23 },
+      "id": 21,
+      "title": "Application Server - Active Subscriptions",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "ttn_lw_as_subscriptions_started_total{job=\"ttn-stack\"} - ttn_lw_as_subscriptions_stopped_total{job=\"ttn-stack\"}",
+          "legendFormat": "Active Subscriptions"
+        },
+        {
+          "expr": "ttn_lw_as_subscription_sets_started_total{job=\"ttn-stack\"} - ttn_lw_as_subscription_sets_stopped_total{job=\"ttn-stack\"}",
+          "legendFormat": "Active Subscription Sets"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 23 },
+      "id": 22,
+      "title": "Events Published / Dropped",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(ttn_lw_events_publishes_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Published"
+        },
+        {
+          "expr": "rate(ttn_lw_events_channel_dropped_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Dropped"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
+      "id": 103,
+      "title": "Redis",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "id": 30,
+      "title": "Redis Traffic",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(redis_client_transmit_bytes_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "TX"
+        },
+        {
+          "expr": "rate(redis_client_receive_bytes_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "RX"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+      "id": 31,
+      "title": "Redis Proto Marshal/Unmarshal Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(redis_protos_marshaled_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Marshaled"
+        },
+        {
+          "expr": "rate(redis_protos_unmarshaled_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Unmarshaled"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 },
+      "id": 104,
+      "title": "Go Runtime",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 41 },
+      "id": 40,
+      "title": "Memory Usage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "go_memstats_heap_alloc_bytes{job=\"ttn-stack\"}",
+          "legendFormat": "Heap Alloc"
+        },
+        {
+          "expr": "go_memstats_heap_inuse_bytes{job=\"ttn-stack\"}",
+          "legendFormat": "Heap In Use"
+        },
+        {
+          "expr": "go_memstats_heap_sys_bytes{job=\"ttn-stack\"}",
+          "legendFormat": "Heap Sys"
+        },
+        {
+          "expr": "go_memstats_stack_inuse_bytes{job=\"ttn-stack\"}",
+          "legendFormat": "Stack In Use"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 41 },
+      "id": 41,
+      "title": "GC Duration",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "go_gc_duration_seconds{job=\"ttn-stack\",quantile=\"0.5\"}",
+          "legendFormat": "p50"
+        },
+        {
+          "expr": "go_gc_duration_seconds{job=\"ttn-stack\",quantile=\"0.75\"}",
+          "legendFormat": "p75"
+        },
+        {
+          "expr": "go_gc_duration_seconds{job=\"ttn-stack\",quantile=\"1\"}",
+          "legendFormat": "p100 (max)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 49 },
+      "id": 42,
+      "title": "Goroutines",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "go_goroutines{job=\"ttn-stack\"}",
+          "legendFormat": "Goroutines"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 20 }
+        }
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 49 },
+      "id": 43,
+      "title": "Heap Object Alloc Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(go_memstats_mallocs_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Allocs"
+        },
+        {
+          "expr": "rate(go_memstats_frees_total{job=\"ttn-stack\"}[5m])",
+          "legendFormat": "Frees"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "drawStyle": "line", "fillOpacity": 10 }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 57 },
+      "id": 105,
+      "title": "Logs & Workers",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 58 },
+      "id": 50,
+      "title": "Log Messages Rate (by level)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(ttn_lw_log_messages_total{job=\"ttn-stack\"}[5m])) by (level)",
+          "legendFormat": "{{ level }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "drawStyle": "bars", "fillOpacity": 50, "stacking": { "mode": "normal" } }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "error" }, "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "warn" }, "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "info" }, "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "debug" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }] }
+        ]
+      }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 58 },
+      "id": 51,
+      "title": "Worker Pool",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "ttn_lw_workerpool_workers_idle{job=\"ttn-stack\"}",
+          "legendFormat": "Idle"
+        },
+        {
+          "expr": "ttn_lw_workerpool_workers_started{job=\"ttn-stack\"} - ttn_lw_workerpool_workers_stopped{job=\"ttn-stack\"}",
+          "legendFormat": "Active"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 20 }
+        }
+      }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["ttn", "lorawan"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "TTN Stack",
+  "uid": "ttn-stack-overview"
+}
