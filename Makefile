@@ -23,8 +23,15 @@ BACKUP_DIR     := backups
 
 all: up
 
+# 0. Docker / Docker Compose の確認・インストール
+check-docker:
+	@if ! command -v docker > /dev/null 2>&1 || ! docker compose version > /dev/null 2>&1; then \
+		echo ">>> Docker または docker compose プラグインが見つかりません。インストールします..."; \
+		sudo ./install-docker.sh; \
+	fi
+
 # 1. コンテナの起動
-up:
+up: check-docker
 	docker compose up -d
 
 # 2. コンテナの停止
@@ -39,7 +46,7 @@ logs:
 	docker compose logs -f stack
 
 # 5. 初期セットアップ
-init: secrets-gen
+init: check-docker secrets-gen
 	@$(MAKE) --no-print-directory _init
 
 _init: conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create
@@ -152,6 +159,7 @@ help:
 	@echo "  make status    - コンテナの状態と検出したIPの表示"
 	@echo "  make shell     - stackコンテナにシェル接続"
 	@echo ""
+	@echo "  make check-docker - Docker / docker compose の確認・自動インストール"
 	@echo "  make init      - 初期セットアップ (証明書, DB, ユーザー作成)"
 	@echo "  make clean     - 全データ削除 (DB, 証明書, 設定)"
 	@echo "  make reset     - clean + init + up"
@@ -264,4 +272,4 @@ console-create:
 		--logout-redirect-uri "/console"
 
 .PHONY: all up down restart logs init _init clean reset status shell backup restore update update-admin help \
-	secrets-gen conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create
+	check-docker secrets-gen conf-gen cert-gen fix-perms wait-db db-migrate user-create cli-create console-create
