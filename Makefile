@@ -216,7 +216,7 @@ cert-gen:
 	@# 証明書作成 (SAN にIPを含めないとGoのTLS検証が失敗する)
 	@openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem \
 		-days 3650 -nodes -subj "/CN=$(SERVER_IP)" \
-		-addext "subjectAltName=IP:$(SERVER_IP),IP:127.0.0.1,DNS:localhost" \
+		-addext "subjectAltName=IP:$(SERVER_IP),IP:127.0.0.1,DNS:$(SERVER_IP)" \
 		-addext "basicConstraints=critical,CA:TRUE" \
 		-addext "keyUsage=critical,keyCertSign,cRLSign,digitalSignature,keyEncipherment"
 	@cp certs/cert.pem certs/ca.pem
